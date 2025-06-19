@@ -1,0 +1,5 @@
+PyPDF2
+llama-cpp-python
+unidecode
+fuzzywuzzy
+scikit-learn
