@@ -1,6 +1,6 @@
-# Chatbot básico en Python
-
-Este es un chatbot simple que responde a saludos y preguntas básicas. Puedes expandirlo fácilmente agregando más respuestas.
+# Chatbot basico
+Este chatbot funciona unicamente en terminal, por ahora.
+Para hacerlo funcionar deben hacer lo de abajo.
 
 
 ## Instalación de Microsoft C++ Build Tools
