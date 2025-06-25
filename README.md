@@ -5,6 +5,7 @@ Para hacerlo funcionar deben hacer lo de abajo.
 
 ## Instalación de Microsoft C++ Build Tools
 
+
 Algunas librerías de Python requieren compilar código nativo. Para ello, es necesario instalar Microsoft C++ Build Tools. Sigue estos pasos:
 
 1. Ve a la página oficial de descarga: https://visualstudio.microsoft.com/visual-cpp-build-tools/
