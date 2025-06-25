@@ -1,20 +1,16 @@
 import requests # Necesario para hacer llamadas HTTP a la API
 
-# --- Configuración de la API de Llama (¡DEBES REEMPLAZAR ESTOS VALORES!) ---
+# --- Configuración de la API de Llama 
 # 1. LLAMA_API_URL: Punto final de la API para modelos de chat en Together.ai
-#    (Típicamente: "https://api.together.xyz/v1/chat/completions")
+#    
 LLAMA_API_URL = "https://api.together.xyz/v1/chat/completions"
 
 # 2. LLAMA_API_KEY: Tu clave de API personal de Together.ai
-#    (Obtenla de tu Dashboard en Together.ai)
+#    
 LLAMA_API_KEY = "tgp_v1_4s7dks6_lq2DgCR-n6LcDrB4id9Zf1DGspqEmLswN94"
 
 # 3. LLAMA_MODEL_ID: El identificador exacto del modelo Llama 2 que deseas usar en Together.ai.
-#    Ejemplos comunes: "meta-llama/Llama-2-7b-chat-hf", "meta-llama/Llama-2-13b-chat-hf"
-#    Asegúrate de que este ID coincida con uno de los modelos de chat disponibles en Together.ai.
-#    Nota: "Llama-3.3-70B-Instruct-Turbo-Free" parece ser un nombre no estándar. 
-#    Asegúrate de que el ID del modelo que uses sea el correcto y esté disponible en Together.ai.
-#    Por ejemplo: "meta-llama/Llama-3-70b-chat-hf" o "meta-llama/Llama-2-70b-chat"
+#  
 LLAMA_MODEL_ID = "meta-llama/Llama-3-70b-chat-hf"
 
 
