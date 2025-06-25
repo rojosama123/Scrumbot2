@@ -17,8 +17,6 @@ LLAMA_MODEL_ID = "meta-llama/Llama-3-70b-chat-hf"
 # --- Función Principal (main) ---
 def main():
     # --- Verificación de la configuración de la API ---
-    # La verificación ahora comprueba si las variables están vacías,
-    # lo cual es más robusto para asegurar que se han configurado.
     if not LLAMA_API_URL or \
        not LLAMA_API_KEY or \
        not LLAMA_MODEL_ID:
