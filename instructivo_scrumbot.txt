@@ -1,0 +1,78 @@
+=========================================================
+INSTRUCTIVO PARA INICIAR EL CHATBOT SCRUM (FASTAPI + REACT)
+=========================================================
+
+📁 Estructura recomendada del proyecto:
+C:\Users\dell\Desktop\GestSoftware\Scrumbot2\
+│
+├── chatbot_pdf2.py           ← Lógica de conexión a Llama (Together.ai)
+├── main.py                   ← Backend FastAPI
+├── requirements2.txt          ← Dependencias backend
+├── frontend\                 ← Carpeta con la app React (frontend)
+│   ├── package.json
+│   └── src\App.js
+│
+=========================================================
+1. INICIAR EL BACKEND (FASTAPI)
+=========================================================
+
+🔹 Requisitos previos:
+- Tener Python 3.10+ instalado
+- Instalar las dependencias con:
+
+    pip install -r requirements2.txt
+
+🔹 Encender el backend:
+
+    cd C:\Users\dell\Desktop\GestSoftware\Scrumbot2 \\ la ruta cambia dependiendo de donde se use
+    uvicorn main:app --reload --port 8000
+
+🔹 Deberías ver:
+
+    Uvicorn running on http://127.0.0.1:8000
+
+⚠️ Importante:
+- El backend debe tener CORS activado con `localhost:3000` como origen permitido.
+
+=========================================================
+2. INICIAR EL FRONTEND (REACT)
+=========================================================
+
+🔹 Requisitos previos:
+- Tener Node.js y npm instalados (https://nodejs.org)
+
+🔹 Iniciar frontend:
+
+    cd C:\Users\dell\Desktop\GestSoftware\Scrumbot2\scrum-chatbot-frontend
+    npm start
+
+🔹 Se abrirá en el navegador:
+
+    http://localhost:3000
+
+=========================================================
+3. USAR EL CHATBOT
+=========================================================
+
+1. Escribe una pregunta relacionada con Scrum (por ejemplo: "¿Qué es un Sprint?").
+2. Presiona el botón "Enviar".
+3. El chatbot responderá desde la perspectiva Scrum usando el modelo LLaMA.
+
+=========================================================
+4. DETENER TODO
+=========================================================
+
+🔹 Para cerrar backend: en la terminal donde corre `uvicorn`, presiona CTRL+C.
+🔹 Para cerrar frontend: en la terminal donde corre `npm start`, presiona CTRL+C.
+
+=========================================================
+¿DUDAS?
+=========================================================
+
+- Asegúrate que el backend esté encendido ANTES de usar React.
+- Si React dice “Error al conectar con el backend”, revisa que:
+    ✅ FastAPI esté corriendo en el puerto 8000
+    ✅ `allow_origins` incluya http://localhost:3000
+    ✅ No haya errores en consola
+
+=========================================================

@@ -1,0 +1,90 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.chat-box {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  height: 500px;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mensaje {
+  display: flex;
+  margin: 10px 0;
+}
+
+.mensaje.usuario {
+  justify-content: flex-end;
+}
+
+.mensaje.bot {
+  justify-content: flex-start;
+}
+
+.burbuja {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.mensaje.usuario .burbuja {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.mensaje.bot .burbuja {
+  background-color: #e4e6eb;
+  color: #333;
+  border-bottom-left-radius: 0;
+}
+
+.input-box {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+textarea {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  resize: none;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  height: 60px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}

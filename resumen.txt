@@ -1,0 +1,47 @@
+🔧 Lo que configuramos paso a paso
+
+🧠 Backend (FastAPI)
+Creamos main.py con un endpoint /chat tipo POST.
+
+Conectamos ese endpoint con chatbot_pdf2.py, que envía la pregunta a la API de LLaMA.
+
+Habilitamos CORS para permitir que React se comunique con FastAPI.
+
+🔒 Seguridad
+Usamos variables como LLAMA_API_KEY para acceder a Together.ai.
+
+Validamos errores y vacíos en la respuesta del modelo.
+
+🌐 Frontend (React)
+Creamos la app en frontend/ usando create-react-app.
+
+Maquetamos un diseño moderno con:
+
+Burbujas estilo ChatGPT
+
+Scroll automático
+
+Indicador de “Escribiendo…”
+
+Campo de texto + botón enviar
+
+Conectamos el frontend al backend usando fetch() a http://localhost:8000/chat.
+
+Levantar backend:
+
+cd Scrumbot2
+uvicorn main:app --reload --port 8000
+
+Levantar frontend:
+
+cd Scrumbot2/frontend
+npm start
+
+🧪 ¿Cómo se usa?
+Escribe una pregunta como:
+
+¿Qué hace un Scrum Master?
+
+Presiona Enviar
+
+El bot responde desde la perspectiva de Scrum usando LLaMA
