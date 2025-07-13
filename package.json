@@ -1,0 +1,16 @@
+{
+  "name": "chatbot-scrum-tailwind",
+  "version": "1.0.0",
+  "description": "Chatbot de Scrum con Flask y Tailwind CSS",
+  "main": "index.js",
+  "scripts": {
+    "build:tailwind": "npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify",
+    "watch:tailwind": "npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch"
+  },
+  "keywords": [],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.0.0"
+  }
+}
