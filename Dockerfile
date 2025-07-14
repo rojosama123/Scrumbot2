@@ -1,30 +1,24 @@
-# Usa una imagen base que tenga Node.js y Python
-FROM node:20-alpine AS build_stage
+# --- Etapa de construcción de Frontend (Tailwind CSS) ---
+FROM node:20-alpine AS frontend_build_stage
 
-# Instala Python y pip (necesario para esta imagen base específica)
-RUN apk add --no-cache python3 py3-pip
-
-# Establece el directorio de trabajo para la fase de construcción de Frontend (Tailwind)
+# Establece el directorio de trabajo
 WORKDIR /app/frontend
 
-# Copia SOLO el package.json primero
+# Copia los archivos necesarios para la compilación de Tailwind
+# package.json es para instalar tailwindcss y sus dependencias
 COPY package.json ./
+COPY tailwind.config.js ./
+COPY static/css/input.css static/css/input.css
 
-# Instala las dependencias de Node.js, lo que CREARÁ package-lock.json dentro del contenedor
+# Instala las dependencias de Node.js (incluyendo tailwindcss)
 RUN npm install
 
-# Ahora que package-lock.json existe (dentro del contenedor), puedes copiar otros archivos si es necesario
-# (aunque para este caso, ya no es estrictamente necesario copiarlo si se generó aquí)
-
-# Copia los archivos de Tailwind (input.css y config)
-COPY tailwind.config.js ./
-COPY ./static/css/input.css ./static/css/input.css
-
 # Compila el CSS de Tailwind
+# Asegúrate de que la ruta de salida sea donde Flask espera el archivo (static/css/)
 RUN npx tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify
 
-# --- Etapa de ejecución de la aplicación Flask (más ligera) ---
-FROM python:3.10-slim AS run_stage
+# --- Etapa de ejecución de la aplicación Flask ---
+FROM python:3.10-slim AS app_run_stage
 
 # Establece el directorio de trabajo para la aplicación Flask
 WORKDIR /app
@@ -35,14 +29,26 @@ COPY requirements.txt .
 # Instala las dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia los archivos de la aplicación Flask y el CSS compilado
+# Copia todos los archivos de la aplicación Flask
 COPY . /app
 
-# Mueve el CSS compilado de la etapa de build a la etapa de ejecución
-COPY --from=build_stage /app/frontend/static/css/output.css /app/static/css/output.css
+# Copia el CSS compilado de la etapa de construcción a la ubicación final esperada por Flask
+# La ruta de origen es relativa al WORKDIR de frontend_build_stage
+# La ruta de destino es relativa al WORKDIR de app_run_stage
+COPY --from=frontend_build_stage /app/frontend/static/css/output.css /app/static/css/output.css
 
-# Expone el puerto en el que Flask se ejecutará.
+# AQUI DEBES AGREGAR LA LINEA PARA COPIAR init_db.py
+COPY init_db.py /app/init_db.py
+
+# Copia el script de entrada
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Expone el puerto en el que Flask se ejecutará
 EXPOSE 5000
 
-# Comando para ejecutar la aplicación Flask.
+# Usa el script de entrada para preparar y ejecutar la aplicación
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Comando por defecto para el entrypoint
 CMD ["flask", "run", "--host=0.0.0.0"]

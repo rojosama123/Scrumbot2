@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scrum Expert AI</title>
+    <title>Scrum Expert AI - Modificar Tarea</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -52,6 +52,7 @@
             background-color: #0ea5e9;
         }
 
+        /* Agrega estilos para el modal si no los tienes ya en un archivo CSS global */
         .modal {
             display: none;
             position: fixed;
@@ -111,7 +112,6 @@
             
             <div id="loginForm" class="{{ '' if show_login_modal and not show_register_modal else 'hidden' }}">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Inicia Sesión</h2>
-                {# Este div será el contenedor de los mensajes de error del login #}
                 <div id="login-messages">
                     {% for message in messages %}
                         {% if message.category == 'danger' %}
@@ -141,7 +141,6 @@
 
             <div id="registerForm" class="{{ 'hidden' if not show_register_modal else '' }}">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Regístrate</h2>
-                {# Este div será el contenedor de los mensajes de error del registro #}
                 <div id="register-messages">
                     {% for message in messages %}
                         {% if message.category == 'danger' or message.category == 'info' or message.category == 'success' %}
@@ -194,7 +193,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_tareas') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-list-check text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-list-check text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Tareas</span>
                     </a>
                 </li>
@@ -249,7 +248,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_tareas') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-list-check text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-list-check text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Tareas</span>
                     </a>
                 </li>
@@ -280,78 +279,51 @@
         </div>
     </div>
 
-    <main class="flex-1 md:ml-64 min-h-screen">
-        <div class="max-w-3xl mx-auto px-4 pt-2 md:px-6 md:pt-4 flex flex-col space-y-4">
+    <main class="flex-1 md:ml-64 min-h-screen p-6 flex items-center justify-center">
+        <div class="max-w-md w-full bg-white rounded-xl shadow-md p-8 animate-fade-in">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Modificar Tarea</h1>
 
-            {% for message in messages %}
-                {% if message.category == 'success' %}
-                    <div class="p-3 mb-4 rounded-md text-sm animate-fade-in bg-green-100 text-green-800" role="alert">
-                        {{ message.message }}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-4">
+                        {% for category, message in messages %}
+                            <div class="p-3 rounded-md text-sm animate-fade-in 
+                                {% if category == 'success' %} bg-green-100 text-green-800
+                                {% elif category == 'danger' %} bg-red-100 text-red-800
+                                {% elif category == 'info' %} bg-blue-100 text-blue-800
+                                {% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                     </div>
                 {% endif %}
-            {% endfor %}
+            {% endwith %}
 
-            <div id="chat-output" class="flex-1 overflow-y-auto pb-4"> 
-                {% if respuesta %}
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden animate-fade-in border border-gray-200">
-                        <div class="p-5">
-                            <div class="flex items-start mb-4">
-                                <div class="bg-primary-900 p-2 rounded-full mr-3">
-                                    <i class="fas fa-robot text-primary-200"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h2 class="text-lg font-semibold text-gray-800 mb-2">Respuesta</h2>
-                                    <div class="prose max-w-none text-gray-700">
-                                        {{ respuesta | safe }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            {% if tarea %}
+                <form action="{{ url_for('modificar_tarea', task_id=tarea.id) }}" method="post" class="space-y-4">
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Descripción de la Tarea</label>
+                        <input type="text" id="description" name="description" value="{{ tarea.description }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
                     </div>
-                {% else %}
-                    <div class="flex flex-col items-center text-center py-4"> 
-                        <div class="inline-block p-5 bg-primary-900 rounded-full mb-6">
-                            <i class="fas fa-comments text-primary-400 text-4xl"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">¡Hola, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Invitado{% endif %}! ¿En qué puedo ayudarte hoy?</h3>
-                        <p class="text-gray-600 max-w-md mx-auto mb-8">Pregúntame sobre sprints, roles Scrum, ceremonias o gestiona tus tareas e impedimentos.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg w-full">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 text-left cursor-pointer hover:shadow-md transition-shadow" onclick="document.getElementById('preguntaInput').value = '¿Qué es un Daily Scrum?'; document.getElementById('chatForm').submit();">
-                                <p class="text-sm text-gray-600 mb-1">Ejemplo:</p>
-                                <p class="font-medium text-primary-500">¿Qué es un Daily Scrum?</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 text-left cursor-pointer hover:shadow-md transition-shadow" onclick="document.getElementById('preguntaInput').value = 'Agregar tarea: Implementar diseño'; document.getElementById('chatForm').submit();">
-                                <p class="text-sm text-gray-600 mb-1">Ejemplo:</p>
-                                <p class="font-medium text-primary-500">Agregar tarea: Implementar diseño</p>
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 text-left cursor-pointer hover:shadow-md transition-shadow" onclick="document.getElementById('preguntaInput').value = 'Registrar impedimento: Falta de recursos'; document.getElementById('chatForm').submit();">
-                                <p class="text-sm text-gray-600 mb-1">Ejemplo:</p>
-                                <p class="font-medium text-primary-500">Registrar impedimento: Falta de recursos</p>
-                            </div>
-                            </div>
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
+                        <select id="status" name="status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                            <option value="pendiente" {% if tarea.status == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="en progreso" {% if tarea.status == 'en progreso' %}selected{% endif %}>En progreso</option>
+                            <option value="completada" {% if tarea.status == 'completada' %}selected{% endif %}>Completada</option>
+                        </select>
                     </div>
-                {% endif %}
-            </div>
-
-            <form id="chatForm" method="post" class="mt-10 mb-6"> 
-                <div class="flex shadow rounded-lg overflow-hidden border border-gray-200 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 transition-all">
-                    <input 
-                        type="text" 
-                        name="pregunta" 
-                        id="preguntaInput"
-                        class="flex-1 p-4 bg-white text-gray-800 focus:outline-none placeholder-gray-400" 
-                        placeholder="Escribe tu pregunta sobre Scrum o un comando (ej: Agregar tarea:..., Registrar impedimento:...)" 
-                        required
-                    >
-                    <button 
-                        type="submit" 
-                        class="bg-primary-500 hover:bg-primary-600 text-white px-6 font-medium transition-colors flex items-center"
-                    >
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </form>
+                    <div class="flex justify-between items-center">
+                        <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            Guardar Cambios
+                        </button>
+                    </div>
+                    <a href="{{ url_for('listar_tareas') }}" class="block text-center text-sm text-primary-600 hover:text-primary-500 mt-4">Cancelar y volver a Tareas</a>
+                </form>
+            {% else %}
+                <p class="text-gray-600 text-center py-8">Tarea no encontrada.</p>
+                <a href="{{ url_for('listar_tareas') }}" class="block text-center text-sm text-primary-600 hover:text-primary-500 mt-4">Volver a Tareas</a>
+            {% endif %}
         </div>
     </main>
 
@@ -360,107 +332,114 @@
         document.getElementById('mobile-sidebar-toggle').addEventListener('click', function() {
             document.getElementById('mobile-sidebar').classList.remove('-translate-x-full');
         });
-        
         document.getElementById('mobile-sidebar-close').addEventListener('click', function() {
             document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
         });
-        
-        // Activar elementos de la barra lateral al hacer clic (ajustado para enlaces directos)
-        // Esta parte es la que asegura que se activan al hacer clic en cualquier página
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function(event) {
-                // No previene el default para permitir la navegación
-                
-                // Elimina la clase 'active' de todos los items
-                document.querySelectorAll('.sidebar-item').forEach(i => {
-                    i.classList.remove('active');
-                });
-                // Añade la clase 'active' al item clicado
-                this.classList.add('active');
-                
-                // Cerrar la barra lateral móvil después de la selección
-                if (window.innerWidth < 768) {
-                    document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
-                }
-            });
-        });
 
-        // Lógica del Modal
-        const loginRegisterModal = document.getElementById('loginRegisterModal');
+        // Lógica para el Modal de Login/Registro (copiar y pegar las funciones completas si esta página no hereda de un base.html con ellas)
+        // Si esta página hereda de un layout base que ya tiene estas funciones, puedes eliminar este bloque.
+        const loginRegisterModal = document.getElementById('loginRegisterModal'); 
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
         const loginMessagesDiv = document.getElementById('login-messages');
         const registerMessagesDiv = document.getElementById('register-messages');
 
         function closeModal() {
-            loginRegisterModal.classList.remove('flex');
-            loginRegisterModal.classList.add('hidden');
-            const url = new URL(window.location);
-            url.searchParams.delete('show_login_modal');
-            url.searchParams.delete('show_register_modal');
-            window.history.replaceState({}, '', url);
+            if (loginRegisterModal) { // Verificar si el modal existe
+                loginRegisterModal.classList.remove('flex');
+                loginRegisterModal.classList.add('hidden');
+                const url = new URL(window.location);
+                url.searchParams.delete('show_login_modal');
+                url.searchParams.delete('show_register_modal');
+                window.history.replaceState({}, '', url);
+            }
         }
 
         function showLoginForm() {
-            loginForm.classList.remove('hidden');
-            loginForm.classList.add('block'); // Asegurarse de que esté visible
-            registerForm.classList.add('hidden');
-            registerMessagesDiv.innerHTML = ''; 
+            if (loginForm && registerForm) { // Verificar si los formularios existen
+                loginForm.classList.remove('hidden');
+                loginForm.classList.add('block');
+                registerForm.classList.add('hidden');
+                if (registerMessagesDiv) registerMessagesDiv.innerHTML = '';
+            }
         }
 
         function showRegisterForm() {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
-            registerForm.classList.add('block'); // Asegurarse de que esté visible
-            loginMessagesDiv.innerHTML = '';
+            if (loginForm && registerForm) { // Verificar si los formularios existen
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                registerForm.classList.add('block');
+                if (loginMessagesDiv) loginMessagesDiv.innerHTML = '';
+            }
         }
 
         function showLoginModal() {
-            loginRegisterModal.classList.add('flex');
-            loginRegisterModal.classList.remove('hidden');
-            showLoginForm();
+            if (loginRegisterModal) { // Verificar si el modal existe
+                loginRegisterModal.classList.add('flex');
+                loginRegisterModal.classList.remove('hidden');
+                showLoginForm();
+            }
         }
 
+        // Lógica para activar el item de la barra lateral según la URL actual
         window.onload = function() {
+            // Manejo de la visibilidad del modal al cargar la página
             const urlParams = new URLSearchParams(window.location.search);
             const showLogin = urlParams.get('show_login_modal') === 'True';
             const showRegister = urlParams.get('show_register_modal') === 'True';
 
-            if (showLogin) {
+            if (showLogin && loginRegisterModal) {
                 loginRegisterModal.classList.add('flex');
                 loginRegisterModal.classList.remove('hidden');
                 showLoginForm();
-            } else if (showRegister) {
+            } else if (showRegister && loginRegisterModal) {
                 loginRegisterModal.classList.add('flex');
                 loginRegisterModal.classList.remove('hidden');
                 showRegisterForm();
-            } else if ("{{ show_login_modal }}" === "True") { 
+            } else if ("{{ show_login_modal }}" === "True" && loginRegisterModal) { 
                 // Esto se ejecuta si Flask pasó show_login_modal=True directamente en el render_template
                 loginRegisterModal.classList.add('flex');
                 loginRegisterModal.classList.remove('hidden');
                 showLoginForm();
             }
 
-            // Lógica para activar el item de la barra lateral según la URL actual
+            // Activar el item de la barra lateral que corresponde a la URL actual
             const currentPath = window.location.pathname;
             document.querySelectorAll('.sidebar-item a').forEach(link => {
-                // Obtener la ruta del enlace
-                const linkPath = new URL(link.href).pathname;
+                const linkPath = new URL(link.href).pathname; // Obtener solo la ruta del enlace
+                
+                // Asegúrate de normalizar las rutas para comparaciones (ej. remover barras finales)
+                const normalizedCurrentPath = currentPath.endsWith('/') && currentPath !== '/' ? currentPath.slice(0, -1) : currentPath;
+                const normalizedLinkPath = linkPath.endsWith('/') && linkPath !== '/' ? linkPath.slice(0, -1) : linkPath;
 
-                // Si la ruta del enlace coincide con la ruta actual, activa su padre <li>
-                if (linkPath === currentPath) {
+                // Para la página de modificar tarea, el sidebar activo debería ser 'Tareas'
+                // ya que es una sub-página de la gestión de tareas.
+                // Verificamos si la ruta actual empieza con la ruta de 'listar_tareas'.
+                const listarTareasPath = "{{ url_for('listar_tareas') }}"; 
+                const normalizedListarTareasPath = new URL(listarTareasPath, window.location.origin).pathname; 
+
+                if (normalizedLinkPath === normalizedCurrentPath || 
+                    (normalizedLinkPath === normalizedListarTareasPath && normalizedCurrentPath.startsWith(normalizedListarTareasPath))) {
                     link.closest('.sidebar-item').classList.add('active');
                 } else {
                     link.closest('.sidebar-item').classList.remove('active');
                 }
             });
-        };
 
-        // La función enviarPreguntaPredefinida ya no es necesaria aquí si los enlaces son directos
-        // function enviarPreguntaPredefinida(question) {
-        //     document.getElementById('preguntaInput').value = question;
-        //     document.getElementById('chatForm').submit();
-        // }
+            // Re-activar el item al hacer clic (esto se solapa un poco con el onload, pero asegura la reactividad)
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', function(event) {
+                    // No prevenimos el default para que la navegación ocurra
+                    document.querySelectorAll('.sidebar-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    if (window.innerWidth < 768) {
+                        document.getElementById('mobile-sidebar').classList.add('-translate-x-full');
+                    }
+                });
+            });
+        };
     </script>
 </body>
 </html>

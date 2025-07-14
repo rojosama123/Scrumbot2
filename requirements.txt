@@ -1,3 +1,6 @@
-requests
 Flask
+Flask-SQLAlchemy
+Flask-Login
+requests
 markdown
+werkzeug
