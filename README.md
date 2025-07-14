@@ -1,49 +1,13 @@
-# Chatbot basico
-Este chatbot funciona unicamente en terminal, por ahora.
+## Para levantar el ScrumBot hagan lo siguiente en una termina abierta en la carpeta raiz del proyecto (o en el mismo visual):
 
-Para hacerlo funcionar deben hacer lo de abajo.
+1. docker login (se logueando con su cuenta de docker)
+2. docker-compose up --build -d (levantan el contenedor en segundo plano)
+3. docker-compose down (tiran abajo el contenedor)
 
+## Si realizan cambios en cualquier archivo del proyecto tiene que hacer el punto 3 y luego el 2. Esto es porque tiene que construir de nuevo la imagen y el contenedor.
 
-## Instalación de Microsoft C++ Build Tools
+## Para ver la base de datos (dentro de una terminal igual):
 
-Algunas librerías de Python requieren compilar código nativo. Para ello, es necesario instalar Microsoft C++ Build Tools. Sigue estos pasos:
+1. docker cp chatbot-scrum:/app/instance/site.db ./site.db
 
-1. Ve a la página oficial de descarga: https://visualstudio.microsoft.com/visual-cpp-build-tools/
-2. Descarga el instalador y ejecútalo.
-3. En el instalador, selecciona "Herramientas de compilación de C++" (C++ build tools).
-4. Haz clic en "Instalar" y espera a que finalice el proceso.
-5. Una vez instalado, reinicia tu computadora si el instalador lo solicita.
-
-Esto permitirá compilar extensiones de Python que lo requieran (por ejemplo, al instalar paquetes como `llama-cpp-python`).
-
-## Construcción de la imagen Docker de manera local
-
-1. Abre una terminal en la carpeta raíz del proyecto (donde está el `Dockerfile`).
-2. Ejecuta el siguiente comando para construir la imagen (puedes cambiar el nombre `chatbot-scrum` por el que prefieras):
-
-docker build -t chatbot-scrum .
-
-## Construcción de la imagen a Docker Hub
-
-Si quieres subir la imagen a Docker Hub, usa tu usuario:
-
-docker build -t TU_USUARIO/chatbot-scrum:latest .
-
-## Ejecución del chatbot
-
-Una vez construida la imagen, ejecuta el contenedor con:
-
-docker run -it --rm chatbot-scrum
-
-## O, si usaste tu usuario de Docker Hub:
-
-docker run -it --rm TU_USUARIO/chatbot-scrum:latest
-
-
-## Notas
-
-- El chatbot solo responde en la terminal.
-- Si necesitas instalar dependencias adicionales, agrégalas al archivo `requirements.txt` y reconstruye la imagen.
-- Para detener el chatbot, escribe `salir`, `adiós` o presiona `Ctrl+C`.
-
-Y YERRRRRAAA
+Esta linea les copiará y pegará el archivo site.db en el proyecto y ahí pueden ver las tablas de la base de datos.
