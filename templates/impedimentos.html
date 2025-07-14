@@ -198,7 +198,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -301,18 +301,35 @@
             {% if impedimentos %}
                 <ul class="space-y-4">
                     {% for impedimento in impedimentos %}
-                        <li class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm animate-fade-in">
-                            <div class="flex-1 mb-2 sm:mb-0">
+                        <li class="relative flex flex-col sm:flex-row items-start justify-between p-4 border border-gray-200 rounded-lg shadow-sm animate-fade-in">
+                            <div class="flex-1 mb-2 sm:mb-0 pr-24">
                                 <p class="text-lg font-semibold text-gray-800">{{ impedimento.description }}</p>
-                                <p class="text-sm text-gray-500">Estado: <span class="font-medium {% if impedimento.status == 'resuelto' %}text-green-600{% elif impedimento.status == 'en progreso' %}text-blue-600{% else %}text-yellow-600{% endif %}">{{ impedimento.status | capitalize }}</span></p>
+                                <p class="text-sm text-gray-500">
+                                    Estado: 
+                                    <span class="font-medium 
+                                        {% if impedimento.status == 'resuelto' %}text-green-600
+                                        {% elif impedimento.status == 'en resolución' %}text-blue-600
+                                        {% else %}text-yellow-600{% endif %}"><span class="font-medium">{{ impedimento.status | capitalize }}</span>
+                                    </span>
+                                </p>
+                                <p class="text-sm text-gray-500">Registrado el: <span class="font-medium">{{ impedimento.date_posted.strftime('%d-%m-%Y %H:%M') }}</span></p>
+                                {% if impedimento.last_modified %}
+                                <p class="text-sm text-gray-500">
+                                    Última modificación: <span class="font-medium">{{ impedimento.last_modified.strftime('%d-%m-%Y %H:%M') }}</span>
+                                </p>
+                                {% endif %}
+                                {% if impedimento.responsible %}
+                                    <p class="text-sm text-gray-500">Responsable: <span class="font-medium">{{ impedimento.responsible }}</span></p>
+                                {% endif %}
+                                
                             </div>
-                            <div class="flex space-x-2">
-                                <a href="{{ url_for('modificar_impedimento', impediment_id=impedimento.id) }}" class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors text-sm">
-                                    <i class="fas fa-edit mr-1"></i> Modificar
+                            <div class="absolute top-4 right-4 flex space-x-2">
+                                <a href="{{ url_for('modificar_impedimento', impediment_id=impedimento.id) }}" class="w-8 h-8 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors flex items-center justify-center">
+                                    <i class="fas fa-edit text-base"></i>
                                 </a>
                                 <form action="{{ url_for('eliminar_impedimento', impediment_id=impedimento.id) }}" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este impedimento?');">
-                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm">
-                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                    <button type="submit" class="w-8 h-8 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center">
+                                        <i class="fas fa-trash-alt text-base"></i>
                                     </button>
                                 </form>
                             </div>

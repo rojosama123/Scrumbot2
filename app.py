@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from datetime import datetime # ¡Importamos datetime!
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tu_super_secreto_aqui_cambialo_en_produccion_mas_complejo' # ¡IMPORTANTE! Cambia esto por una clave compleja y segura
@@ -53,6 +54,9 @@ class Task(db.Model):
     name = db.Column(db.String(200), nullable=False)
     details = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(50), default='pendiente') # Ej: 'pendiente', 'en progreso', 'completada'
+    # ¡Nueva columna para la fecha de registro!
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow) 
+    last_modified = db.Column(db.DateTime, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -63,6 +67,9 @@ class Impediment(db.Model):
     description = db.Column(db.Text, nullable=False)
     responsible = db.Column(db.String(100), nullable=True)
     status = db.Column(db.String(50), default='abierto') # Ej: 'abierto', 'en resolución', 'resuelto'
+    # ¡Nueva columna para la fecha de registro!
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    last_modified = db.Column(db.DateTime, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
@@ -127,7 +134,8 @@ def logout():
 @app.route('/tareas', methods=['GET'])
 @login_required
 def listar_tareas():
-    tareas = Task.query.filter_by(user_id=current_user.id).order_by(Task.id.desc()).all()
+    # Ordenar por fecha de registro descendente para mostrar las más recientes primero
+    tareas = Task.query.filter_by(user_id=current_user.id).order_by(Task.date_posted.desc()).all()
     return render_template('tareas.html', tareas=tareas)
 
 @app.route('/tareas/modificar/<int:task_id>', methods=['GET', 'POST'])
@@ -139,8 +147,9 @@ def modificar_tarea(task_id):
         tarea.name = request.form.get('name')
         tarea.details = request.form.get('details')
         tarea.status = request.form.get('status')
+        tarea.last_modified = datetime.utcnow()
         db.session.commit()
-        flash('Tarea modificada con éxito.', 'success')
+        flash(f"Tarea modificada con éxito: {tarea.name}", 'success')
         return redirect(url_for('listar_tareas'))
     
     return render_template('modificar_tarea.html', tarea=tarea)
@@ -157,7 +166,8 @@ def eliminar_tarea(task_id):
 @app.route('/impedimentos', methods=['GET'])
 @login_required
 def listar_impedimentos():
-    impedimentos = Impediment.query.filter_by(user_id=current_user.id).order_by(Impediment.id.desc()).all()
+    # Ordenar por fecha de registro descendente para mostrar los más recientes primero
+    impedimentos = Impediment.query.filter_by(user_id=current_user.id).order_by(Impediment.date_posted.desc()).all()
     return render_template('impedimentos.html', impedimentos=impedimentos)
 
 @app.route('/impedimentos/modificar/<int:impediment_id>', methods=['GET', 'POST'])
@@ -169,8 +179,9 @@ def modificar_impedimento(impediment_id):
         impedimento.description = request.form.get('description')
         impedimento.responsible = request.form.get('responsible')
         impedimento.status = request.form.get('status')
+        impedimento.last_modified = datetime.utcnow()
         db.session.commit()
-        flash('Impedimento modificado con éxito.', 'success')
+        flash(f'Impedimento modificado con éxito: {impedimento.description}', 'success')
         return redirect(url_for('listar_impedimentos'))
     
     return render_template('modificar_impedimento.html', impedimento=impedimento)
@@ -229,6 +240,7 @@ def index():
             task_name = session['chatbot_state']['data']['task_name']
             details = pregunta if pregunta else "Sin detalles adicionales."
             
+            # Ahora la fecha se asigna automáticamente al crear la tarea
             new_task = Task(name=task_name, details=details, user_id=current_user.id)
             db.session.add(new_task)
             db.session.commit()
@@ -241,6 +253,7 @@ def index():
             impediment_description = session['chatbot_state']['data']['impediment_description']
             responsible = pregunta if pregunta else "No asignado."
             
+            # Ahora la fecha se asigna automáticamente al crear el impedimento
             new_impediment = Impediment(description=impediment_description, responsible=responsible, user_id=current_user.id)
             db.session.add(new_impediment)
             db.session.commit()
@@ -263,15 +276,6 @@ def index():
                 respuesta_html = markdown.markdown(f"Entendido. **'{impediment_description}'**. ¿Quién es el responsable de resolver este impedimento?")
             else:
                 respuesta_html = markdown.markdown("Por favor, describe el impedimento. Ejemplo: `Registrar impedimento: Servidor caído`")
-        
-        # Las funcionalidades "ver tareas" y "ver impedimentos" se eliminan del chat aquí.
-        # Ahora se accede a ellas directamente desde la barra lateral.
-        # Esto es clave para que sean páginas separadas.
-        # La IA ya no responderá a estos comandos en el chat.
-        # elif pregunta.lower() == "ver tareas":
-        #    return redirect(url_for('listar_tareas')) # Redirige a la nueva página de tareas
-        # elif pregunta.lower() == "ver impedimentos":
-        #    return redirect(url_for('listar_impedimentos')) # Redirige a la nueva página de impedimentos
         
         else:
             # --- Envío a la API de Llama para preguntas generales de Scrum ---

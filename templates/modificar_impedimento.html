@@ -198,7 +198,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -253,7 +253,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -301,14 +301,18 @@
             {% if impedimento %}
                 <form action="{{ url_for('modificar_impedimento', impediment_id=impedimento.id) }}" method="post" class="space-y-4">
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Descripción del Impedimento</label>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Nombre del Impedimento</label>
                         <input type="text" id="description" name="description" value="{{ impedimento.description }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="responsible" class="block text-sm font-medium text-gray-700">Responsable</label>
+                        <input type="text" id="responsible" name="responsible" value="{{ impedimento.responsible }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
                     </div>
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
                         <select id="status" name="status" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
-                            <option value="pendiente" {% if impedimento.status == 'pendiente' %}selected{% endif %}>Pendiente</option>
-                            <option value="en progreso" {% if impedimento.status == 'en progreso' %}selected{% endif %}>En progreso</option>
+                            <option value="abierto" {% if impedimento.status == 'abierto' %}selected{% endif %}>Abierto</option>
+                            <option value="en resolucion" {% if impedimento.status == 'en resolucion' %}selected{% endif %}>En resolución</option>
                             <option value="resuelto" {% if impedimento.status == 'resuelto' %}selected{% endif %}>Resuelto</option>
                         </select>
                     </div>

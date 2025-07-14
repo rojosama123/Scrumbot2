@@ -1,0 +1,33 @@
+# docker-compose.yml
+version: '3.8' # Especifica la versión de Docker Compose. Puedes usar 3.8 o una más reciente.
+
+services:
+  # Define tu servicio de aplicación Flask
+  app:
+
+    image: chatbot-scrum # Aquí puedes especificar una imagen personalizada si la tienes, o dejarlo vacío para construir desde el Dockerfile
+    # Le dice a Docker Compose que construya la imagen desde el Dockerfile
+    # que se encuentra en el directorio actual (donde está este docker-compose.yml)
+    build:
+      context: .
+
+    # Mapea el puerto 5000 del contenedor al puerto 5000 de tu máquina local
+    ports:
+      - "5000:5000"
+
+    # Define los volúmenes para la persistencia de datos
+    volumes:
+      # 'db-chatbot' es el nombre del volumen de Docker que creamos (o creará Compose)
+      # '/app/instance' es la ruta dentro del contenedor donde se guardan los datos de tu DB SQLite
+      - db-chatbot:/app/instance
+
+    # Opcional: Si quieres reiniciar el contenedor si falla
+    # restart: unless-stopped
+
+    # Opcional: Si quieres un nombre específico para el contenedor generado por Compose
+    container_name: chatbot-scrum
+
+# Define los volúmenes nombrados que usarán tus servicios
+volumes:
+   db-chatbot: # Esto declara el volumen nombrado 'db-chatbot'
+    name: db-chatbot

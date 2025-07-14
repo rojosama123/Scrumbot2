@@ -52,7 +52,6 @@
             background-color: #0ea5e9;
         }
 
-        /* Agrega estilos para el modal si no los tienes ya en un archivo CSS global */
         .modal {
             display: none;
             position: fixed;
@@ -198,7 +197,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -253,7 +252,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -301,18 +300,34 @@
             {% if tareas %}
                 <ul class="space-y-4">
                     {% for tarea in tareas %}
-                        <li class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm animate-fade-in">
-                            <div class="flex-1 mb-2 sm:mb-0">
-                                <p class="text-lg font-semibold text-gray-800">{{ tarea.description }}</p>
+                        <li class="relative flex flex-col sm:flex-row items-start justify-between p-4 border border-gray-200 rounded-lg shadow-sm animate-fade-in">
+                            <div class="flex-1 mb-2 sm:mb-0 pr-24">
+                                <p class="text-lg font-semibold text-gray-800">{{ tarea.name }}</p>
                                 <p class="text-sm text-gray-500">Estado: <span class="font-medium {% if tarea.status == 'completada' %}text-green-600{% elif tarea.status == 'en progreso' %}text-blue-600{% else %}text-yellow-600{% endif %}">{{ tarea.status | capitalize }}</span></p>
+                                <p class="text-sm text-gray-500">Registrada el: <span class="font-medium">{{ tarea.date_posted.strftime('%d-%m-%Y %H:%M') }}</span></p>
+                                {% if tarea.last_modified %}
+                                <p class="text-sm text-gray-500">
+                                    Última modificación: <span class="font-medium">{{ tarea.last_modified.strftime('%d-%m-%Y %H:%M') }}</span>
+                                </p>
+                                {% endif %}
+                                {# --- INICIO: Mantiene el cambio para mostrar detalles mejor --- #}
+                                {% if tarea.details %}
+                                    <div class="mt-2 p-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-700">
+                                        <p class="font-semibold text-gray-800">Detalles:</p>
+                                        <p class="whitespace-pre-wrap">{{ tarea.details }}</p>
+                                    </div>
+                                {% endif %}
+                                {# --- FIN: Mantiene el cambio para mostrar detalles mejor --- #}
                             </div>
-                            <div class="flex space-x-2">
-                                <a href="{{ url_for('modificar_tarea', task_id=tarea.id) }}" class="px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors text-sm">
-                                    <i class="fas fa-edit mr-1"></i> Modificar
+                            <div class="absolute top-4 right-4 flex space-x-2">
+                                {# Botón Modificar: w-8 h-8 para tamaño fijo, flex items-center justify-center para centrar el icono #}
+                                <a href="{{ url_for('modificar_tarea', task_id=tarea.id) }}" class="w-8 h-8 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors flex items-center justify-center">
+                                    <i class="fas fa-edit text-base"></i> {# Aumentamos el tamaño del icono a text-base #}
                                 </a>
                                 <form action="{{ url_for('eliminar_tarea', task_id=tarea.id) }}" method="post" onsubmit="return confirm('¿Estás seguro de que quieres eliminar esta tarea?');">
-                                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors text-sm">
-                                        <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                    {# Botón Eliminar: w-8 h-8 para tamaño fijo, flex items-center justify-center para centrar el icono #}
+                                    <button type="submit" class="w-8 h-8 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center justify-center">
+                                        <i class="fas fa-trash-alt text-base"></i> {# Aumentamos el tamaño del icono a text-base #}
                                     </button>
                                 </form>
                             </div>
@@ -335,7 +350,6 @@
         });
 
         // Lógica para el Modal de Login/Registro (copiar y pegar las funciones completas si esta página no hereda de un base.html con ellas)
-        // Si esta página hereda de un layout base que ya tiene estas funciones, puedes eliminar este bloque.
         const loginRegisterModal = document.getElementById('loginRegisterModal'); 
         const loginForm = document.getElementById('loginForm');
         const registerForm = document.getElementById('registerForm');
@@ -343,7 +357,7 @@
         const registerMessagesDiv = document.getElementById('register-messages');
 
         function closeModal() {
-            if (loginRegisterModal) { // Verificar si el modal existe
+            if (loginRegisterModal) {
                 loginRegisterModal.classList.remove('flex');
                 loginRegisterModal.classList.add('hidden');
                 const url = new URL(window.location);
@@ -354,7 +368,7 @@
         }
 
         function showLoginForm() {
-            if (loginForm && registerForm) { // Verificar si los formularios existen
+            if (loginForm && registerForm) {
                 loginForm.classList.remove('hidden');
                 loginForm.classList.add('block');
                 registerForm.classList.add('hidden');
@@ -363,7 +377,7 @@
         }
 
         function showRegisterForm() {
-            if (loginForm && registerForm) { // Verificar si los formularios existen
+            if (loginForm && registerForm) {
                 loginForm.classList.add('hidden');
                 registerForm.classList.remove('hidden');
                 registerForm.classList.add('block');
@@ -372,7 +386,7 @@
         }
 
         function showLoginModal() {
-            if (loginRegisterModal) { // Verificar si el modal existe
+            if (loginRegisterModal) {
                 loginRegisterModal.classList.add('flex');
                 loginRegisterModal.classList.remove('hidden');
                 showLoginForm();
@@ -381,7 +395,6 @@
 
         // Lógica para activar el item de la barra lateral según la URL actual
         window.onload = function() {
-            // Manejo de la visibilidad del modal al cargar la página
             const urlParams = new URLSearchParams(window.location.search);
             const showLogin = urlParams.get('show_login_modal') === 'True';
             const showRegister = urlParams.get('show_register_modal') === 'True';
@@ -395,37 +408,31 @@
                 loginRegisterModal.classList.remove('hidden');
                 showRegisterForm();
             } else if ("{{ show_login_modal }}" === "True" && loginRegisterModal) { 
-                // Esto se ejecuta si Flask pasó show_login_modal=True directamente en el render_template
                 loginRegisterModal.classList.add('flex');
                 loginRegisterModal.classList.remove('hidden');
                 showLoginForm();
             }
 
-            // Activar el item de la barra lateral que corresponde a la URL actual
             const currentPath = window.location.pathname;
             document.querySelectorAll('.sidebar-item a').forEach(link => {
-                const linkPath = new URL(link.href).pathname; // Obtener solo la ruta del enlace
+                const linkPath = new URL(link.href).pathname; 
                 
-                // Asegúrate de normalizar las rutas para comparaciones (ej. remover barras finales)
                 const normalizedCurrentPath = currentPath.endsWith('/') && currentPath !== '/' ? currentPath.slice(0, -1) : currentPath;
                 const normalizedLinkPath = linkPath.endsWith('/') && linkPath !== '/' ? linkPath.slice(0, -1) : linkPath;
 
-                // Para la página de listar tareas, activamos si la ruta es exactamente 'listar_tareas'
                 const listarTareasPath = "{{ url_for('listar_tareas') }}"; 
                 const normalizedListarTareasPath = new URL(listarTareasPath, window.location.origin).pathname; 
 
                 if (normalizedLinkPath === normalizedCurrentPath || 
-                    normalizedLinkPath === normalizedListarTareasPath) { // Comprueba si es la página de listar tareas
+                    normalizedLinkPath === normalizedListarTareasPath) {
                     link.closest('.sidebar-item').classList.add('active');
                 } else {
                     link.closest('.sidebar-item').classList.remove('active');
                 }
             });
 
-            // Re-activar el item al hacer clic (esto se solapa un poco con el onload, pero asegura la reactividad)
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.addEventListener('click', function(event) {
-                    // No prevenimos el default para que la navegación ocurra
                     document.querySelectorAll('.sidebar-item').forEach(i => {
                         i.classList.remove('active');
                     });

@@ -199,7 +199,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -254,7 +254,7 @@
                 </li>
                 <li class="sidebar-item">
                     <a href="{{ url_for('listar_impedimentos') }}" class="flex items-center p-3 mx-2 rounded-lg hover:bg-gray-800 transition-colors">
-                        <i class="fas fa-hand-stop text-gray-400 w-6 text-center"></i>
+                        <i class="fas fa-hand-paper text-primary-400 w-6 text-center"></i>
                         <span class="ml-3">Impedimentos</span>
                     </a>
                 </li>
@@ -302,8 +302,13 @@
             {% if tarea %}
                 <form action="{{ url_for('modificar_tarea', task_id=tarea.id) }}" method="post" class="space-y-4">
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Descripción de la Tarea</label>
-                        <input type="text" id="description" name="description" value="{{ tarea.description }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
+                        <label for="name" class="block text-sm font-medium text-gray-700">Nombre de la Tarea</label>
+                        <input type="text" id="name" name="name" value="{{ tarea.name }}" readonly
+                            class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm sm:text-sm text-gray-500">
+                    </div>
+                    <div>
+                        <label for="details" class="block text-sm font-medium text-gray-700">Detalles de la Tarea</label>
+                        <input type="text" id="details" name="details" value="{{ tarea.details }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm">
                     </div>
                     <div>
                         <label for="status" class="block text-sm font-medium text-gray-700">Estado</label>
