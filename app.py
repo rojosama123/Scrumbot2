@@ -19,7 +19,7 @@ login_manager.login_view = 'index' # Redirige a la página principal si no está
 
 # Configuración de la API de Llama (usa tus valores reales)
 LLAMA_API_URL = "https://api.together.xyz/v1/chat/completions"
-LLAMA_API_KEY = "tgp_v1_8FWQQUlSrxg_-JA09jTr6xXeDrJwV3d3GE6P9zNjaK0" # <--- ¡PON TU CLAVE REAL AQUÍ!
+LLAMA_API_KEY = "tgp_v1_OD6yff6BiVoYVxN3NrWTXHa71a6-6queEIiRHC67bP8" # <--- ¡PON TU CLAVE REAL AQUÍ!
 LLAMA_MODEL_ID = "meta-llama/Llama-3-70b-chat-hf"
 
 # Prompt del chatbot mejorado
@@ -301,6 +301,15 @@ def index():
                 if output and "choices" in output and len(output["choices"]) > 0 and \
                    "message" in output["choices"][0] and "content" in output["choices"][0]["message"]:
                     respuesta_markdown = output["choices"][0]["message"]["content"].strip()
+                    # --- Mejora la estructura si la respuesta es muy plana ---
+                    if not any(sym in respuesta_markdown for sym in ["#", "*", "-", "1."]):
+                        respuesta_markdown = (
+                            f"## Respuesta\n\n"
+                            f"**{respuesta_markdown}**\n\n"
+                            f"---\n"
+                            f"*Si necesitas más detalles, por favor pregunta de nuevo.*"
+                        )
+
                     respuesta_html = markdown.markdown(respuesta_markdown)
                 else:
                     respuesta_html = "No pude obtener una respuesta del modelo en este momento."
