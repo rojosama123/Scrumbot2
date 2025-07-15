@@ -19,7 +19,7 @@ login_manager.login_view = 'index' # Redirige a la página principal si no está
 
 # Configuración de la API de Llama (usa tus valores reales)
 LLAMA_API_URL = "https://api.together.xyz/v1/chat/completions"
-LLAMA_API_KEY = "tgp_v1_8FWQQUlSrxg_-JA09jTr6xXeDrJwV3d3GE6P9zNjaK0" # <--- ¡PON TU CLAVE REAL AQUÍ!
+LLAMA_API_KEY = "tgp_v1_OD6yff6BiVoYVxN3NrWTXHa71a6-6queEIiRHC67bP8" # <--- ¡PON TU CLAVE REAL AQUÍ!
 LLAMA_MODEL_ID = "meta-llama/Llama-3-70b-chat-hf"
 
 # Prompt del chatbot mejorado
@@ -195,16 +195,28 @@ def eliminar_impedimento(impediment_id):
     flash('Impedimento eliminado con éxito.', 'success')
     return redirect(url_for('listar_impedimentos'))
 
+@app.route('/invitado')
+def seguir_como_invitado():
+    session['usuario_invitado'] = True
+    flash('Estás usando ScrumBot como invitada.', 'info')
+    return redirect(url_for('index'))
+
 # --- Funcionalidades del Chatbot (Ruta principal) ---
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     respuesta_html = ""
     show_login_modal = False
+
+    # Si el usuario fue redirigido desde una ruta protegida
+    if request.args.get('next'):
+        flash('Debes iniciar sesión para acceder a esta sección.', 'danger')
+        show_login_modal = True
+
     show_register_modal = False
     
     # Comprobamos si el usuario está autenticado al cargar la página
-    if not current_user.is_authenticated:
+    if not current_user.is_authenticated and not session.get('usuario_invitado'):
         show_login_modal = True
 
     # Para mostrar mensajes flash (éxito, error, etc.)
@@ -223,9 +235,13 @@ def index():
 
 
     # Si no está logueado, no procesa preguntas del chatbot, solo muestra el modal
-    if not current_user.is_authenticated:
-        return render_template("index.html", show_login_modal=show_login_modal,
-                               show_register_modal=show_register_modal, messages=messages, current_user=current_user)
+
+    if not current_user.is_authenticated and not session.get('usuario_invitado'):
+        return render_template("index.html",
+                                show_login_modal=True,
+                                show_register_modal=show_register_modal,
+                                messages=messages,
+                                current_user=current_user)
 
     # Manejo del estado para preguntas adicionales (ej. detalles de tarea, responsable de impedimento)
     if 'chatbot_state' not in session:
