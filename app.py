@@ -19,7 +19,7 @@ login_manager.login_view = 'index' # Redirige a la página principal si no está
 
 # Configuración de la API de Llama (usa tus valores reales)
 LLAMA_API_URL = "https://api.together.xyz/v1/chat/completions"
-LLAMA_API_KEY = "tgp_v1_8FWQQUlSrxg_-JA09jTr6xXeDrJwV3d3GE6P9zNjaK0" # <--- ¡PON TU CLAVE REAL AQUÍ!
+LLAMA_API_KEY = "tgp_v1_OD6yff6BiVoYVxN3NrWTXHa71a6-6queEIiRHC67bP8" # <--- ¡PON TU CLAVE REAL AQUÍ!
 LLAMA_MODEL_ID = "meta-llama/Llama-3-70b-chat-hf"
 
 # Prompt del chatbot mejorado
