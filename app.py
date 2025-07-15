@@ -301,6 +301,15 @@ def index():
                 if output and "choices" in output and len(output["choices"]) > 0 and \
                    "message" in output["choices"][0] and "content" in output["choices"][0]["message"]:
                     respuesta_markdown = output["choices"][0]["message"]["content"].strip()
+                    # --- Mejora la estructura si la respuesta es muy plana ---
+                    if not any(sym in respuesta_markdown for sym in ["#", "*", "-", "1."]):
+                        respuesta_markdown = (
+                            f"## Respuesta\n\n"
+                            f"**{respuesta_markdown}**\n\n"
+                            f"---\n"
+                            f"*Si necesitas más detalles, por favor pregunta de nuevo.*"
+                        )
+
                     respuesta_html = markdown.markdown(respuesta_markdown)
                 else:
                     respuesta_html = "No pude obtener una respuesta del modelo en este momento."
